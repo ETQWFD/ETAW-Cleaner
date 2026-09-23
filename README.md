@@ -2,7 +2,7 @@
 
 > 简洁 · 真实 · 干净 —— 一款面向安卓设备的第三方应用扫描、卸载与残留深度清理工具。
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0-0FA893)](https://github.com/ETQWFD/ETAW-Cleaner/releases)
+[![Release](https://img.shields.io/badge/Release-v1.0.1-0FA893)](https://github.com/ETQWFD/ETAW-Cleaner/releases)
 [![Platform](https://img.shields.io/badge/Platform-Android%207.0%2B-0FA893)](https://github.com/ETQWFD/ETAW-Cleaner)
 [![License](https://img.shields.io/badge/License-MIT-0FA893)](LICENSE)
 

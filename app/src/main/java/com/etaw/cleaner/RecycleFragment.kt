@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.etaw.cleaner.databinding.FragmentRecycleBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ class RecycleFragment : Fragment() {
                     .show()
             }
         )
+        binding.recyclerRecords.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerRecords.adapter = adapter
         binding.btnClearRecords.setOnClickListener { clearAll() }
         refresh()

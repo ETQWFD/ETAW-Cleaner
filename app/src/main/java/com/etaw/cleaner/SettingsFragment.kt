@@ -54,10 +54,12 @@ class SettingsFragment : Fragment() {
         )
         val values = arrayOf(Prefs.THEME_SYSTEM, Prefs.THEME_LIGHT, Prefs.THEME_DARK)
         val checked = values.indexOf(current).coerceAtLeast(0)
-        AlertDialog.Builder(ctx)
+        var dialog: AlertDialog? = null
+        dialog = AlertDialog.Builder(ctx)
             .setTitle(R.string.theme_title)
             .setSingleChoiceItems(options, checked) { _, which ->
                 Prefs.setTheme(ctx, values[which])
+                dialog?.dismiss()
                 AppCompatDelegate.setDefaultNightMode(
                     when (values[which]) {
                         Prefs.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
@@ -68,7 +70,8 @@ class SettingsFragment : Fragment() {
                 requireActivity().recreate()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+        dialog.show()
     }
 
     private fun showLanguageDialog() {
@@ -77,15 +80,18 @@ class SettingsFragment : Fragment() {
         val options = arrayOf("简体中文", "English", "繁體中文")
         val values = arrayOf("zh", "en", "zh-rTW")
         val checked = values.indexOf(current).coerceAtLeast(0)
-        AlertDialog.Builder(ctx)
+        var dialog: AlertDialog? = null
+        dialog = AlertDialog.Builder(ctx)
             .setTitle(R.string.language_title)
             .setSingleChoiceItems(options, checked) { _, which ->
                 Prefs.setLang(ctx, values[which])
-                LocaleHelper.apply(ctx)
+                dialog?.dismiss()
+                LocaleHelper.apply(requireActivity().applicationContext)
                 requireActivity().recreate()
             }
             .setNegativeButton(R.string.cancel, null)
-            .show()
+            .create()
+        dialog.show()
     }
 
     private fun showShizukuDialog() {

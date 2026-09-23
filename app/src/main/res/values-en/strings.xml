@@ -9,6 +9,7 @@
     <string name="scan_result">Third-party apps scanned: %1$d</string>
     <string name="btn_refresh">Rescan</string>
     <string name="empty_apps">No third-party apps found</string>
+    <string name="scan_failed">Scan failed: %1$s\nPlease grant the app-list permission and retry</string>
     <string name="site_unknown">Official site: unknown (long-press to search)</string>
     <string name="install_label">Installed on</string>
 

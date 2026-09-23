@@ -9,6 +9,7 @@
     <string name="scan_result">已掃描第三方應用：%1$d 個</string>
     <string name="btn_refresh">重新掃描</string>
     <string name="empty_apps">未發現第三方應用</string>
+    <string name="scan_failed">掃描失敗：%1$s\n請確認已授予應用列表權限後重試</string>
     <string name="site_unknown">官網：未收錄（長按搜尋）</string>
     <string name="install_label">安裝於</string>
 

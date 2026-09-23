@@ -11,6 +11,7 @@
     <string name="scan_result">已扫描第三方应用：%1$d 个</string>
     <string name="btn_refresh">重新扫描</string>
     <string name="empty_apps">未发现第三方应用</string>
+    <string name="scan_failed">扫描失败：%1$s\n请确认已授予应用列表权限后重试</string>
     <string name="site_unknown">官网：未收录（长按搜索）</string>
     <string name="install_label">安装于</string>
 

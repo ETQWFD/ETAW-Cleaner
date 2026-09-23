@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.etaw.cleaner.databinding.FragmentAppsBinding
 import kotlinx.coroutines.launch
 
@@ -47,6 +48,7 @@ class AppsFragment : Fragment() {
             onClick = { app -> showUninstallDialog(app) },
             onLongClick = { app -> showWebsiteSearch(app) }
         )
+        binding.recyclerApps.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerApps.adapter = adapter
         binding.btnRefresh.setOnClickListener { loadApps() }
         binding.btnRefresh.isEnabled = false
@@ -62,13 +64,19 @@ class AppsFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.emptyView.visibility = View.GONE
         lifecycleScope.launch {
-            val apps = AppRepository.loadAppsAsync(requireContext())
-            cachedApps = apps
-            adapter.submit(apps)
-            binding.progressBar.visibility = View.GONE
-            binding.btnRefresh.isEnabled = true
-            binding.tvAppCount.text = getString(R.string.scan_result, apps.size)
-            if (apps.isEmpty()) binding.emptyView.visibility = View.VISIBLE
+            try {
+                val apps = AppRepository.loadAppsAsync(requireContext())
+                cachedApps = apps
+                adapter.submit(apps)
+                binding.tvAppCount.text = getString(R.string.scan_result, apps.size)
+                if (apps.isEmpty()) binding.emptyView.visibility = View.VISIBLE
+            } catch (e: Exception) {
+                binding.emptyView.text = getString(R.string.scan_failed, e.message ?: "unknown")
+                binding.emptyView.visibility = View.VISIBLE
+            } finally {
+                binding.progressBar.visibility = View.GONE
+                binding.btnRefresh.isEnabled = true
+            }
         }
     }
 
