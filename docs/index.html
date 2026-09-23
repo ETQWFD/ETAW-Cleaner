@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETAW清理 — 简洁真实的安卓清理工具</title>
+<meta name="description" content="ETAW清理：扫描第三方应用、双重验证卸载、残留深度清理、SHA-256 回收站记录，支持 Shizuku 授权与检查更新。">
+<meta property="og:title" content="ETAW清理">
+<meta property="og:description" content="简洁 · 真实 · 干净 — 第三方应用扫描、双重验证卸载、残留深度清理。">
+<meta property="og:image" content="assets/hero.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 108 108'%3E%3Crect width='108' height='108' rx='24' fill='%230FA893'/%3E%3Cpath fill='%23fff' d='M34 30h30v7H41v8h19v7H41v10h23v7H34z'/%3E%3Cpath fill='%23fff' d='M76 24l3.2 7.6 7.6 3.2-7.6 3.2-3.2 7.6-3.2-7.6-7.6-3.2 7.6-3.2z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
+<style>
+  :root{
+    --teal:#0FA893; --teal-deep:#0B7C6C; --teal-dark:#085B4F;
+    --ink:#14211E; --sub:#5C6F6B; --bg:#F2F6F5; --surface:#FFFFFF; --line:#E0EAE7;
+    --amber:#F4A259; --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+  img{max-width:100%;display:block}
+  a{color:var(--teal-deep);text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+
+  /* 导航 */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;gap:12px;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;color:var(--ink)}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:22px;font-size:14px;font-weight:500}
+  .nav-links a:hover{color:var(--teal-deep)}
+  .btn{padding:11px 22px;border-radius:999px;background:var(--teal);color:#fff !important;font-weight:700;border:none;cursor:pointer;font-size:15px;transition:background .2s,transform .15s;font-family:inherit}
+  .btn:hover{background:var(--teal-deep)}
+  .btn:active{transform:scale(.97)}
+  .btn.secondary{background:var(--surface);color:var(--teal-deep) !important;border:1.5px solid var(--teal)}
+
+  /* Hero */
+  header{background:linear-gradient(160deg,#0E9C8B 0%,#0B7C6C 55%,#085B4F 100%);color:#fff;overflow:hidden}
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center;padding:64px 0 58px}
+  .kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;background:rgba(255,255,255,.16);padding:6px 14px;border-radius:999px;margin-bottom:18px}
+  h1{font-size:46px;line-height:1.22;font-weight:900;letter-spacing:.01em}
+  h1 .dot{color:var(--amber)}
+  .lead{margin:18px 0 26px;font-size:16.5px;color:rgba(255,255,255,.9);max-width:520px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-cta .btn{background:#fff;color:var(--teal-dark) !important;box-shadow:0 10px 26px rgba(0,0,0,.18)}
+  .hero-cta .btn.ghost{background:transparent;color:#fff !important;border:1.5px solid rgba(255,255,255,.65)}
+  .hero-note{margin-top:16px;font-size:13px;color:rgba(255,255,255,.78)}
+  .hero-fig{position:relative}
+  .hero-fig img{border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.32);border:3px solid rgba(255,255,255,.25)}
+
+  /* 区块 */
+  section{padding:64px 0}
+  .sec-head{max-width:640px;margin:0 auto 44px;text-align:center}
+  .sec-head .tag{color:var(--teal-deep);font-weight:700;font-size:14px;letter-spacing:.12em}
+  h2{font-size:30px;font-weight:900;margin:10px 0 12px}
+  .sec-head p{color:var(--sub);font-size:15.5px}
+
+  /* 特性 */
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;transition:transform .18s,box-shadow .18s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(8,91,79,.10)}
+  .ico{width:46px;height:46px;border-radius:13px;background:rgba(15,168,147,.12);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+  .ico svg{width:24px;height:24px}
+  .card h3{font-size:17px;font-weight:800;margin-bottom:8px}
+  .card p{font-size:14px;color:var(--sub)}
+
+  /* 流程时间轴 */
+  .flow{display:grid;grid-template-columns:auto 1fr;gap:0 18px;max-width:760px;margin:0 auto}
+  .flow .node{grid-column:1;display:flex;flex-direction:column;align-items:center}
+  .flow .num{width:38px;height:38px;border-radius:50%;background:var(--teal);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:1}
+  .flow .line{width:2px;flex:1;background:var(--line);margin:6px 0}
+  .flow article{grid-column:2;padding:2px 0 34px}
+  .flow article h3{font-size:17px;font-weight:800}
+  .flow article p{font-size:14px;color:var(--sub);margin-top:4px}
+
+  /* 下载 */
+  .dl{background:linear-gradient(150deg,#0E9C8B,#0B7C6C 60%,#085B4F);color:#fff;border-radius:26px;padding:48px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
+  .dl h2{color:#fff;margin:8px 0 10px}
+  .dl .sub{color:rgba(255,255,255,.85);font-size:15px;max-width:480px}
+  .dl-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:24px 26px;min-width:280px;backdrop-filter:blur(6px)}
+  .dl-card .ver{font-size:13px;color:rgba(255,255,255,.8)}
+  .dl-card .ver b{font-size:26px;color:#fff;display:block;margin:4px 0 2px}
+  .dl-card .size{font-size:12.5px;color:rgba(255,255,255,.7);margin-bottom:16px}
+  .dl-card .btn{width:100%;background:#fff;color:var(--teal-dark) !important;font-size:16px}
+  .dl-note{margin-top:10px;font-size:12.5px;color:rgba(255,255,255,.75)}
+  .dl-note a{color:#fff;text-decoration:underline}
+
+  /* 更新日志 */
+  .log{max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px 30px}
+  .log .ver-tag{display:inline-block;background:var(--teal);color:#fff;font-weight:700;font-size:13px;padding:3px 12px;border-radius:999px;margin-bottom:12px}
+  .log li{list-style:none;padding:9px 0 9px 26px;position:relative;font-size:15px;color:var(--ink);border-bottom:1px dashed var(--line)}
+  .log li:last-child{border-bottom:none}
+  .log li::before{content:"";position:absolute;left:2px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+
+  /* 开发者 */
+  .dev{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px}
+  .dev img{width:120px;height:120px;border-radius:20px}
+  .dev h3{font-size:19px;font-weight:900}
+  .dev p{color:var(--sub);font-size:14.5px;margin-top:6px}
+  .dev a.mail{display:inline-block;margin-top:12px;font-weight:700}
+
+  footer{border-top:1px solid var(--line);padding:34px 0;background:var(--surface)}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;font-size:13.5px;color:var(--sub)}
+  .foot a{color:var(--teal-deep);font-weight:600}
+
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;padding:46px 0 40px}
+    h1{font-size:36px}
+    .feat{grid-template-columns:1fr}
+    .dl{grid-template-columns:1fr;padding:32px 26px}
+    .nav-links a:not(.btn){display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <div class="brand"><img src="assets/icon.jpg" alt="ETAW清理图标"><span>ETAW清理</span></div>
+    <div class="nav-links">
+      <a href="#features">功能</a>
+      <a href="#flow">使用流程</a>
+      <a href="#download">下载</a>
+      <a href="#changelog">更新日志</a>
+      <a class="btn" href="#download">立即下载</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap hero">
+    <div>
+      <span class="kicker">简洁 · 真实 · 干净</span>
+      <h1>ETAW清理<span class="dot">.</span><br>让卸载干净利落</h1>
+      <p class="lead">一键扫描设备中的第三方应用，列表展示安装时间与官网；双重验证后真实卸载，并深度扫描清理残留文件。卸载记录以 SHA-256 指纹存入本地回收站，随时找回、直达官网重新下载。</p>
+      <div class="hero-cta">
+        <a class="btn" href="#download">下载 APK</a>
+        <a class="btn ghost" href="https://github.com/ETQWFD/ETAW-Cleaner" target="_blank" rel="noopener">查看 GitHub</a>
+      </div>
+      <p class="hero-note">支持 Android 7.0+ · 支持 32/64 位模拟器 · 支持 Shizuku 授权深度清理</p>
+    </div>
+    <div class="hero-fig"><img src="assets/hero.jpg" alt="ETAW清理应用界面"></div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">FEATURES</span>
+      <h2>六大能力，真实可用</h2>
+      <p>不是演示，扫描、卸载、清理、记录每一步都是真实的。</p>
+    </div>
+    <div class="feat">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+        <h3>第三方应用扫描</h3>
+        <p>扫描全部第三方应用，列表清晰展示每个应用的名称、包名、安装时间与官方网站。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M12 3l2.4 5.6L20 9l-4.4 3.6L17.2 19 12 15.8 6.8 19l1.6-6.4L4 9l5.6-.4z"/></svg></div>
+        <h3>双重验证卸载</h3>
+        <p>点击应用弹出卸载询问，二次验证确认后执行卸载，系统级通道再确认一次，杜绝误删。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
+        <h3>残留深度清理</h3>
+        <p>扫描 /data 与 /sdcard 下与卸载应用相关的数据目录、缓存、OBB 等残留，配合 Shizuku 权限真正删除。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M12 2l2.5 5.5L20 9l-4.5 4 1 5.5-4.5-2.5-4.5 2.5 1-5.5L4 9l5.5-1.5z"/></svg></div>
+        <h3>SHA-256 回收站</h3>
+        <p>卸载信息经 SHA-256 哈希计算后记入本地回收站，保存安装时间、官网等完整信息，可随时查找。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><circle cx="12" cy="12" r="3.4"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.01a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.01a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <h3>主题与多语言</h3>
+        <p>内置跟随系统 / 浅色 / 深色三档主题，支持简体中文、English、繁體中文三种语言即时切换。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M20 11a8 8 0 11-15.5-3 8 8 0 0113-6"/><path d="M20 3v5h-5"/></svg></div>
+        <h3>检查更新</h3>
+        <p>设置内一键检查更新，直连 GitHub Release 获取最新版本并跳转下载，官网下载同样同步最新版。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="flow" style="background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">HOW IT WORKS</span>
+      <h2>三步完成一次干净卸载</h2>
+    </div>
+    <div class="flow">
+      <div class="node"><div class="num">1</div><div class="line"></div></div>
+      <article>
+        <h3>扫描第三方应用</h3>
+        <p>打开应用自动扫描，按名称列出所有第三方应用，展示安装时间与官方网址（长按可搜索未收录的官网）。</p>
+      </article>
+      <div class="node"><div class="num">2</div><div class="line"></div></div>
+      <article>
+        <h3>双重验证后卸载</h3>
+        <p>点击目标应用 → 弹出卸载询问 → 二次验证确认 → 执行真实卸载（Shizuku 授权下静默卸载，否则走系统确认通道）。</p>
+      </article>
+      <div class="node"><div class="num">3</div><div class="line"></div></div>
+      <article>
+        <h3>清理残留并记录</h3>
+        <p>自动扫描并删除该应用相关残留文件，卸载信息经 SHA-256 指纹记录进本地回收站，需要时随时找回官网重新下载。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="dl">
+      <div>
+        <h2>下载 ETAW清理</h2>
+        <p class="sub">APK 安装包已签名，可直接安装。页面下方版本与下载链接实时从 GitHub Release 获取，与 App 内「检查更新」保持一致。</p>
+        <p class="sub" style="margin-top:10px">支持 Android 7.0 及以上设备与常见安卓模拟器（32/64 位）。</p>
+      </div>
+      <div class="dl-card">
+        <div class="ver">最新版本 <b id="dlVersion">—</b></div>
+        <div class="size" id="dlSize">正在从 GitHub Release 获取…</div>
+        <a class="btn" id="dlBtn" href="https://github.com/ETQWFD/ETAW-Cleaner/releases" target="_blank" rel="noopener">前往 GitHub Release 下载</a>
+        <p class="dl-note" id="dlNote">如果自动获取失败，请点击上方按钮前往 Release 页面手动下载。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="changelog">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">CHANGELOG</span>
+      <h2>更新日志</h2>
+      <p id="logMeta">由 GitHub Release 实时同步。</p>
+    </div>
+    <div class="log" id="logList">
+      <li>正在加载更新日志…</li>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">DEVELOPER</span>
+      <h2>致敬开发者</h2>
+    </div>
+    <div class="dev">
+      <img src="assets/poster.jpg" alt="ETAW清理宣传海报">
+      <div>
+        <h3>开发者：etc</h3>
+        <p>ETAW清理由开发者 etc 独立开发维护，坚持「简洁、真实、干净」的产品理念：每一个扫描、卸载、清理动作都真实可验证，不做虚假承诺，不偷偷收集任何数据。</p>
+        <p>问题反馈与建议：</p>
+        <a class="mail" href="mailto:2416444244@qq.com">2416444244@qq.com</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 ETAW清理 · 开发者 etc</span>
+    <span>
+      <a href="https://github.com/ETQWFD/ETAW-Cleaner" target="_blank" rel="noopener">GitHub 仓库</a>
+      <span style="margin:0 8px">·</span>
+      <a href="mailto:2416444244@qq.com">联系我们</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var REPO = "ETQWFD/ETAW-Cleaner";
+  var API = "https://api.github.com/repos/" + REPO + "/releases/latest";
+  var verEl = document.getElementById("dlVersion");
+  var sizeEl = document.getElementById("dlSize");
+  var btnEl = document.getElementById("dlBtn");
+  var noteEl = document.getElementById("dlNote");
+  var logEl = document.getElementById("logList");
+  var logMeta = document.getElementById("logMeta");
+
+  function fmtSize(bytes){
+    if (!bytes && bytes !== 0) return "未知大小";
+    if (bytes >= 1048576) return (bytes / 1048576).toFixed(1) + " MB";
+    if (bytes >= 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return bytes + " B";
+  }
+
+  function renderLog(body){
+    if (!body) return;
+    logEl.innerHTML = "";
+    var lines = body.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    lines.forEach(function(line){
+      var li = document.createElement("li");
+      var t = line.replace(/^[-*]\s*/, "");
+      li.textContent = t;
+      logEl.appendChild(li);
+    });
+    if (!lines.length){
+      logEl.innerHTML = "<li>暂无更新说明。</li>";
+    }
+  }
+
+  fetch(API, { headers: { "Accept": "application/vnd.github+json", "User-Agent": "ETAW-Cleaner-Site" } })
+    .then(function(res){ return res.ok ? res.json() : Promise.reject(new Error("HTTP " + res.status)); })
+    .then(function(json){
+      var tag = json.tag_name || "";
+      verEl.textContent = tag.replace(/^v/i, "") || "—";
+      logMeta.textContent = "当前最新版本 " + tag + "，由 GitHub Release 实时同步。";
+      renderLog(json.body);
+      var apk = null, size = null;
+      (json.assets || []).forEach(function(a){
+        if (/\.apk$/i.test(a.name || a.browser_download_url || "")) {
+          apk = a.browser_download_url; size = a.size;
+        }
+      });
+      if (apk){
+        btnEl.href = apk;
+        btnEl.textContent = "下载最新 APK";
+        sizeEl.textContent = "大小：" + fmtSize(size) + " · 随 Release 实时更新";
+        noteEl.textContent = "版本与链接已从 GitHub Release 自动获取，与 App 内检查更新一致。";
+      } else {
+        sizeEl.textContent = "未在 Release 中找到 APK 资源";
+      }
+    })
+    .catch(function(){
+      verEl.textContent = "获取失败";
+      sizeEl.textContent = "无法连接 GitHub，可前往 Release 页面手动下载";
+      logMeta.textContent = "更新日志加载失败，请稍后刷新重试。";
+      logEl.innerHTML = "<li>更新日志暂时无法加载。</li>";
+      btnEl.textContent = "前往 GitHub Release 下载";
+      btnEl.href = "https://github.com/" + REPO + "/releases";
+    });
+})();
+</script>
+</body>
+</html>

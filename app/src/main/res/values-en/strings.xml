@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ETAW Cleaner</string>
+
+    <string name="nav_apps">Apps</string>
+    <string name="nav_recycle">Recycle Bin</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="scan_result">Third-party apps scanned: %1$d</string>
+    <string name="btn_refresh">Rescan</string>
+    <string name="empty_apps">No third-party apps found</string>
+    <string name="site_unknown">Official site: unknown (long-press to search)</string>
+    <string name="install_label">Installed on</string>
+
+    <string name="uninstall_title">Uninstall %1$s?</string>
+    <string name="uninstall_msg">This will uninstall "%1$s" and scan for its residual files. To prevent accidental loss, the uninstall record is saved to the local recycle bin.</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="second_verify_title">Second Verification</string>
+    <string name="second_verify_msg">Confirm again: uninstall "%1$s"? This cannot be undone, residual files will be cleaned as well.</string>
+    <string name="confirm_uninstall">Confirm Uninstall</string>
+    <string name="uninstalling">Uninstalling</string>
+    <string name="uninstalling_detail">Uninstalling "%1$s"…</string>
+    <string name="uninstall_failed">Uninstall failed: %1$s</string>
+    <string name="cleaning">Cleaning Residuals</string>
+    <string name="cleaning_detail">Scanning and cleaning residual files of "%1$s"…</string>
+    <string name="clean_done">Uninstalled and cleaned: %1$s</string>
+    <string name="clean_all">, all residuals removed</string>
+    <string name="clean_limited"> (some system-directory residuals require Shizuku permission)</string>
+    <string name="note_shizuku">All residuals cleaned via Shizuku</string>
+    <string name="note_residue_left">%1$d residual item(s) could not be removed</string>
+    <string name="note_system_mode">Uninstalled via system channel</string>
+    <string name="note_ext_cleaned">Extra external residuals cleaned: %1$d</string>
+
+    <string name="site_search_title">Official site not indexed</string>
+    <string name="site_search_msg">The official site of "%1$s" is not indexed yet. Search it in your browser?</string>
+    <string name="site_search_go">Search Official Site</string>
+    <string name="no_browser">No browser available</string>
+
+    <string name="record_count">Uninstall records: %1$d</string>
+    <string name="empty_records">Recycle bin is empty\nUninstalled apps are recorded here</string>
+    <string name="btn_clear_records">Clear Records</string>
+    <string name="record_pkg">Package: %1$s</string>
+    <string name="record_install">Installed: %1$s</string>
+    <string name="record_uninstall">Uninstalled: %1$s</string>
+    <string name="record_hash">SHA-256: %1$s</string>
+    <string name="record_residue">Residual cleaning: scanned (%1$d left)</string>
+    <string name="record_note">Note: %1$s</string>
+    <string name="visit_site">Visit Official Site</string>
+    <string name="close">Close</string>
+    <string name="delete_record_title">Delete Record</string>
+    <string name="delete_record_msg">Delete the uninstall record of "%1$s"?</string>
+    <string name="clear_records_title">Clear Recycle Bin</string>
+    <string name="clear_records_msg">Clear all uninstall records? This cannot be undone.</string>
+    <string name="delete">Delete</string>
+
+    <string name="settings_theme">Theme</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_shizuku">Shizuku Authorization</string>
+    <string name="settings_check_update">Check for Updates</string>
+    <string name="settings_developer">Developer</string>
+    <string name="settings_about">About</string>
+    <string name="theme_title">Choose Theme</string>
+    <string name="theme_system">Follow System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language_title">Choose Language</string>
+    <string name="shizuku_title">Shizuku Authorization</string>
+    <string name="shizuku_ready">Shizuku authorized — silent uninstall and deep residual cleaning enabled</string>
+    <string name="shizuku_not_ready">Shizuku not ready</string>
+    <string name="shizuku_ready_detail">Shizuku is running and authorized. Residual files under /data and /sdcard will be cleaned deeply on uninstall.</string>
+    <string name="shizuku_need_grant">Shizuku service detected but not authorized yet. Tap the button below to grant.</string>
+    <string name="shizuku_guide">Shizuku grants system-level uninstall and deep cleaning to this app.\n\nHow to start:\n1. Install the Shizuku app and start its service;\n2. Or run adb from a PC:\n   adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh\n\nTutorial: https://shizuku.rikka.app</string>
+    <string name="shizuku_grant">Grant</string>
+    <string name="checking_update">Checking for updates…</string>
+    <string name="update_check_failed">Update check failed. Check your network and try again.</string>
+    <string name="update_found">New version available: %1$s</string>
+    <string name="update_body_default">A new version is out. Tap below to download from GitHub Release.</string>
+    <string name="update_download">Download Latest</string>
+    <string name="latest_version">Already up to date</string>
+    <string name="developer_title">Developer Info</string>
+    <string name="developer_info">Developer: etc\nContact: 2416444244@qq.com\n\nSalute to every developer.</string>
+    <string name="contact_email">Send Email</string>
+    <string name="no_mail">No mail app available</string>
+    <string name="about_version">ETAW Cleaner v%1$s</string>
+    <string name="about_slogan">Simple · Real · Clean</string>
+</resources>
