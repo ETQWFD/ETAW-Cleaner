@@ -33,6 +33,25 @@
     <string name="note_system_mode">Uninstalled via system channel</string>
     <string name="note_ext_cleaned">Extra external residuals cleaned: %1$d</string>
 
+    <!-- Deep scan / deep delete / records -->
+    <string name="residue_title">%1$d residuals found (%2$s in total)</string>
+    <string name="residue_msg">The files/folders below all belong to the uninstalled app. To prevent accidental deletion, check the items you want to remove:</string>
+    <string name="risky_note">(may contain chats &amp; important data, unchecked by default)</string>
+    <string name="delete_checked">Delete selected</string>
+    <string name="skip_clean">Skip cleanup</string>
+    <string name="deleting">Deep deleting</string>
+    <string name="deleting_detail">Deep deleting %1$d residual items…</string>
+    <string name="cleaned_result">Deleted %1$d residuals, freed %2$s</string>
+    <string name="residue_left">, %1$d left (may be in use or need higher permission)</string>
+    <string name="no_residue">"%1$s" uninstalled, no residuals found</string>
+    <string name="clean_skipped">"%1$s" uninstalled, cleanup skipped</string>
+    <string name="note_no_residue">No residual files found</string>
+    <string name="note_skipped">User chose to skip residual cleanup</string>
+    <string name="note_deleted_list">Deleted details:</string>
+    <string name="note_more">…and %1$d more</string>
+    <string name="record_scanned">Deep scan: %1$d items</string>
+    <string name="record_deleted">Deleted: %1$d items, freed %2$s</string>
+
     <string name="site_search_title">Official site not indexed</string>
     <string name="site_search_msg">The official site of "%1$s" is not indexed yet. Search it in your browser?</string>
     <string name="site_search_go">Search Official Site</string>

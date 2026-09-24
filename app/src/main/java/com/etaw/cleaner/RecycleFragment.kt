@@ -73,6 +73,8 @@ class RecycleFragment : Fragment() {
         sb.append(ctx.getString(R.string.record_install, AppRepository.formatTime(r.installTime))).append("\n")
         sb.append(ctx.getString(R.string.record_uninstall, AppRepository.formatTime(r.uninstallTime))).append("\n")
         sb.append(ctx.getString(R.string.record_hash, r.sha256)).append("\n")
+        sb.append(ctx.getString(R.string.record_scanned, r.scannedCount)).append("\n")
+        sb.append(ctx.getString(R.string.record_deleted, r.deletedCount, ResidueScanner.formatSize(r.freedBytes))).append("\n")
         sb.append(ctx.getString(R.string.record_residue, r.residueCount)).append("\n")
         if (r.note.isNotBlank()) sb.append(ctx.getString(R.string.record_note, r.note)).append("\n")
         val website = r.website

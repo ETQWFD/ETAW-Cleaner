@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 1) {
+class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 2) {
 
     companion object {
         const val TABLE = "deleted_apps"
@@ -17,11 +17,23 @@ class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 1)
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "pkg TEXT, name TEXT, website TEXT, " +
                     "install_time INTEGER, uninstall_time INTEGER, " +
-                    "sha256 TEXT, residue_count INTEGER, note TEXT)"
+                    "sha256 TEXT, residue_count INTEGER, " +
+                    "scanned_count INTEGER DEFAULT 0, " +
+                    "deleted_count INTEGER DEFAULT 0, " +
+                    "freed_bytes INTEGER DEFAULT 0, " +
+                    "deleted_paths TEXT DEFAULT '', " +
+                    "note TEXT)"
         )
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 2) {
+            try { db.execSQL("ALTER TABLE $TABLE ADD COLUMN scanned_count INTEGER DEFAULT 0") } catch (e: Exception) {}
+            try { db.execSQL("ALTER TABLE $TABLE ADD COLUMN deleted_count INTEGER DEFAULT 0") } catch (e: Exception) {}
+            try { db.execSQL("ALTER TABLE $TABLE ADD COLUMN freed_bytes INTEGER DEFAULT 0") } catch (e: Exception) {}
+            try { db.execSQL("ALTER TABLE $TABLE ADD COLUMN deleted_paths TEXT DEFAULT ''") } catch (e: Exception) {}
+        }
+    }
 
     fun insert(item: RecordItem): Long {
         val cv = ContentValues().apply {
@@ -32,6 +44,10 @@ class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 1)
             put("uninstall_time", item.uninstallTime)
             put("sha256", item.sha256)
             put("residue_count", item.residueCount)
+            put("scanned_count", item.scannedCount)
+            put("deleted_count", item.deletedCount)
+            put("freed_bytes", item.freedBytes)
+            put("deleted_paths", item.deletedPaths)
             put("note", item.note)
         }
         return writableDatabase.insert(TABLE, null, cv)
@@ -51,6 +67,10 @@ class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 1)
             val utIdx = it.getColumnIndexOrThrow("uninstall_time")
             val shaIdx = it.getColumnIndexOrThrow("sha256")
             val rcIdx = it.getColumnIndexOrThrow("residue_count")
+            val scIdx = it.getColumnIndexOrThrow("scanned_count")
+            val dcIdx = it.getColumnIndexOrThrow("deleted_count")
+            val fbIdx = it.getColumnIndexOrThrow("freed_bytes")
+            val dpIdx = it.getColumnIndexOrThrow("deleted_paths")
             val noteIdx = it.getColumnIndexOrThrow("note")
             while (it.moveToNext()) {
                 list.add(
@@ -63,6 +83,10 @@ class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 1)
                         uninstallTime = it.getLong(utIdx),
                         sha256 = it.getString(shaIdx),
                         residueCount = it.getInt(rcIdx),
+                        scannedCount = it.getInt(scIdx),
+                        deletedCount = it.getInt(dcIdx),
+                        freedBytes = it.getLong(fbIdx),
+                        deletedPaths = it.getString(dpIdx),
                         note = it.getString(noteIdx)
                     )
                 )

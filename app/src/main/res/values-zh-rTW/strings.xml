@@ -33,6 +33,25 @@
     <string name="note_system_mode">透過系統卸載通道完成</string>
     <string name="note_ext_cleaned">額外清理外置儲存殘留 %1$d 處</string>
 
+    <!-- 深度掃描 / 深度刪除 / 記錄 -->
+    <string name="residue_title">掃描到 %1$d 處殘留（合計 %2$s）</string>
+    <string name="residue_msg">以下檔案/資料夾均與卸載的應用相關。為防止誤刪，請勾選確認要刪除的項目：</string>
+    <string name="risky_note">（含聊天記錄等重要資料，預設不勾選）</string>
+    <string name="delete_checked">刪除選中項</string>
+    <string name="skip_clean">跳過清理</string>
+    <string name="deleting">正在深度刪除</string>
+    <string name="deleting_detail">正在深度刪除 %1$d 處殘留…</string>
+    <string name="cleaned_result">已刪除 %1$d 處殘留，釋放 %2$s</string>
+    <string name="residue_left">，仍剩餘 %1$d 處（可能被佔用或需更高權限）</string>
+    <string name="no_residue">已卸載「%1$s」，未發現殘留檔案</string>
+    <string name="clean_skipped">已卸載「%1$s」，已跳過殘留清理</string>
+    <string name="note_no_residue">未發現殘留檔案</string>
+    <string name="note_skipped">使用者選擇跳過殘留清理</string>
+    <string name="note_deleted_list">刪除明細：</string>
+    <string name="note_more">…及另外 %1$d 項</string>
+    <string name="record_scanned">深度掃描：%1$d 處</string>
+    <string name="record_deleted">已刪除：%1$d 處，釋放 %2$s</string>
+
     <string name="site_search_title">未收錄官網</string>
     <string name="site_search_msg">「%1$s」暫未收錄官網，是否在瀏覽器中搜尋其官方網站？</string>
     <string name="site_search_go">搜尋官網</string>

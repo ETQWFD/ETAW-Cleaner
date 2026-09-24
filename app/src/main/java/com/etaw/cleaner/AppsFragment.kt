@@ -103,8 +103,8 @@ class AppsFragment : Fragment() {
 
     private fun doUninstall(app: AppInfo) {
         val activity = requireActivity()
-        if (ShizukuHelper.isReady()) {
-            // Shizuku 授权模式：真实静默卸载 + 残留清理
+        if (ShizukuHelper.isReady() || RootHelper.isAvailable()) {
+            // 高权限通道：Shizuku 静默卸载 / root 卸载（真实卸载）
             val progress = androidx.appcompat.app.AlertDialog.Builder(activity)
                 .setTitle(R.string.uninstalling)
                 .setMessage(getString(R.string.uninstalling_detail, app.name))
@@ -112,7 +112,8 @@ class AppsFragment : Fragment() {
                 .show()
             lifecycleScope.launch {
                 val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                    ShizukuHelper.uninstall(app.pkg)
+                    if (ShizukuHelper.isReady()) ShizukuHelper.uninstall(app.pkg)
+                    else RootHelper.uninstall(app.pkg)
                 }
                 progress.dismiss()
                 if (ok) {
@@ -132,6 +133,11 @@ class AppsFragment : Fragment() {
 
     private fun onUninstallConfirmed(pkg: String) {
         val app = cachedApps.firstOrNull { it.pkg == pkg } ?: return
+        startCleanup(app)
+    }
+
+    /** 卸载成功后：深度扫描残留 → 用户勾选确认 → 深度删除 → 完整记录 */
+    private fun startCleanup(app: AppInfo) {
         val ctx = requireContext()
         val progress = androidx.appcompat.app.AlertDialog.Builder(ctx)
             .setTitle(R.string.cleaning)
@@ -139,48 +145,135 @@ class AppsFragment : Fragment() {
             .setCancelable(false)
             .show()
         lifecycleScope.launch {
-            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                var residues = ShizukuHelper.findResidues(pkg)
-                val externalCleaned = ShizukuHelper.tryExternalClean(pkg)
-                if (residues.isNotEmpty()) {
-                    ShizukuHelper.deleteResidues(residues)
-                }
-                residues = ShizukuHelper.findResidues(pkg)
-                val note = buildString {
-                    if (ShizukuHelper.isReady()) {
-                        append(ctx.getString(R.string.note_shizuku))
-                        if (residues.isNotEmpty()) append(" ${ctx.getString(R.string.note_residue_left, residues.size)}")
-                    } else {
-                        append(ctx.getString(R.string.note_system_mode))
-                        if (externalCleaned > 0) append(" ${ctx.getString(R.string.note_ext_cleaned, externalCleaned)}")
+            val hasShell = ShizukuHelper.isReady() || RootHelper.isAvailable()
+            val items = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                if (hasShell) {
+                    val exec: (String) -> Pair<Boolean, String> = { cmd ->
+                        if (ShizukuHelper.isReady()) ShizukuHelper.exec(cmd) else RootHelper.exec(cmd)
                     }
+                    ResidueScanner.deepScan(app.pkg, exec)
+                } else {
+                    ResidueScanner.externalScan(app.pkg)
                 }
-                Triple(residues.size, externalCleaned, note)
             }
-            val (residueLeft, extCleaned, note) = result
-            val db = RecordDb(ctx)
-            db.insert(
-                RecordItem(
-                    id = 0,
-                    pkg = app.pkg,
-                    name = app.name,
-                    website = app.website ?: "",
-                    installTime = app.installTime,
-                    uninstallTime = System.currentTimeMillis(),
-                    sha256 = HashHelper.appFingerprint(app),
-                    residueCount = residueLeft,
-                    note = note
-                )
-            )
             progress.dismiss()
+            if (items.isEmpty()) {
+                saveRecord(app, items, emptyList(), 0L, note = ctx.getString(R.string.note_no_residue))
+                Toast.makeText(ctx, getString(R.string.no_residue, app.name), Toast.LENGTH_LONG).show()
+                loadApps()
+                return@launch
+            }
+            showResidueReviewDialog(app, items, hasShell)
+        }
+    }
+
+    private fun showResidueReviewDialog(app: AppInfo, items: List<ResidueItem>, hasShell: Boolean) {
+        val ctx = requireContext()
+        val labels = items.map { item ->
+            val size = ResidueScanner.formatSize(item.sizeBytes)
+            if (item.risky) "${item.path}（$size）${ctx.getString(R.string.risky_note)}"
+            else "${item.path}（$size）"
+        }.toTypedArray()
+        val checked = BooleanArray(items.size) { !items[it].risky }
+        AlertDialog.Builder(ctx)
+            .setTitle(getString(R.string.residue_title, items.size, ResidueScanner.formatSize(items.sumOf { it.sizeBytes })))
+            .setMessage(R.string.residue_msg)
+            .setMultiChoiceItems(labels, checked) { _, idx, isChecked -> checked[idx] = isChecked }
+            .setPositiveButton(R.string.delete_checked) { _, _ ->
+                val selected = items.filterIndexed { i, _ -> checked[i] }
+                performDeepDelete(app, items, selected, hasShell)
+            }
+            .setNegativeButton(R.string.skip_clean) { _, _ ->
+                saveRecord(app, items, emptyList(), 0L, note = ctx.getString(R.string.note_skipped))
+                Toast.makeText(ctx, getString(R.string.clean_skipped, app.name), Toast.LENGTH_LONG).show()
+                loadApps()
+            }
+            .show()
+    }
+
+    private fun performDeepDelete(app: AppInfo, items: List<ResidueItem>, selected: List<ResidueItem>, hasShell: Boolean) {
+        val ctx = requireContext()
+        if (selected.isEmpty()) {
+            saveRecord(app, items, emptyList(), 0L, note = ctx.getString(R.string.note_skipped))
+            Toast.makeText(ctx, getString(R.string.clean_skipped, app.name), Toast.LENGTH_LONG).show()
+            loadApps()
+            return
+        }
+        val progress = androidx.appcompat.app.AlertDialog.Builder(ctx)
+            .setTitle(R.string.deleting)
+            .setMessage(getString(R.string.deleting_detail, selected.size))
+            .setCancelable(false)
+            .show()
+        lifecycleScope.launch {
+            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                if (hasShell) {
+                    val exec: (String) -> Pair<Boolean, String> = { cmd ->
+                        if (ShizukuHelper.isReady()) ShizukuHelper.exec(cmd) else RootHelper.exec(cmd)
+                    }
+                    val quoted = selected.joinToString(" ") { "'" + it.path.replace("'", "'\\''") + "'" }
+                    exec("rm -rf $quoted")
+                    // 删除后复核：确认实际剩余残留，统计真实删除数量
+                    val remainingItems = ResidueScanner.deepScan(app.pkg, exec)
+                    val remainingPaths = remainingItems.map { it.path }.toSet()
+                    val deletedCount = selected.count { it.path !in remainingPaths }
+                    Pair(deletedCount, remainingItems)
+                } else {
+                    val deletedCount = selected.count { item ->
+                        try {
+                            val f = java.io.File(item.path)
+                            f.exists() && f.deleteRecursively()
+                        } catch (e: Exception) { false }
+                    }
+                    Pair(deletedCount, ResidueScanner.externalScan(app.pkg))
+                }
+            }
+            val (deletedCount, remainingItems) = result
+            progress.dismiss()
+            val freedBytes = selected.take(deletedCount).sumOf { it.sizeBytes }
+            val note = buildString {
+                append(ctx.getString(R.string.note_deleted_list)).append("\n")
+                selected.take(8).forEach {
+                    append("· ").append(it.path).append("（").append(ResidueScanner.formatSize(it.sizeBytes)).append("）\n")
+                }
+                if (selected.size > 8) append(ctx.getString(R.string.note_more, selected.size - 8)).append("\n")
+                if (remainingItems.isNotEmpty()) append(ctx.getString(R.string.note_residue_left, remainingItems.size))
+            }
+            saveRecord(app, items, selected.take(deletedCount), freedBytes, note = note)
             val msg = buildString {
-                append(getString(R.string.clean_done, app.name))
-                if (ShizukuHelper.isReady() && residueLeft == 0) append(getString(R.string.clean_all))
-                if (!ShizukuHelper.isReady()) append(getString(R.string.clean_limited))
+                append(getString(R.string.cleaned_result, deletedCount, ResidueScanner.formatSize(freedBytes)))
+                if (remainingItems.isNotEmpty()) append(getString(R.string.residue_left, remainingItems.size))
             }
             Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show()
             loadApps()
         }
+    }
+
+    private fun saveRecord(
+        app: AppInfo,
+        scanned: List<ResidueItem>,
+        deleted: List<ResidueItem>,
+        freedBytes: Long,
+        note: String
+    ) {
+        val ctx = requireContext()
+        val db = RecordDb(ctx)
+        db.insert(
+            RecordItem(
+                id = 0,
+                pkg = app.pkg,
+                name = app.name,
+                website = app.website ?: "",
+                installTime = app.installTime,
+                uninstallTime = System.currentTimeMillis(),
+                sha256 = HashHelper.appFingerprint(app),
+                residueCount = (scanned.size - deleted.size).coerceAtLeast(0),
+                scannedCount = scanned.size,
+                deletedCount = deleted.size,
+                freedBytes = freedBytes,
+                deletedPaths = deleted.joinToString("\n") { it.path },
+                note = note
+            )
+        )
     }
 
     private fun showWebsiteSearch(app: AppInfo) {

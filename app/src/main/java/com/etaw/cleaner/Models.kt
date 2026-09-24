@@ -19,5 +19,9 @@ data class RecordItem(
     val uninstallTime: Long,
     val sha256: String,
     val residueCount: Int,
+    val scannedCount: Int,
+    val deletedCount: Int,
+    val freedBytes: Long,
+    val deletedPaths: String,
     val note: String
 )
