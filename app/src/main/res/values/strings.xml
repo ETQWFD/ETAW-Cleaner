@@ -55,6 +55,21 @@
     <string name="record_scanned">深度扫描：%1$d 处</string>
     <string name="record_deleted">已删除：%1$d 处，释放 %2$s</string>
 
+    <!-- 禁用 / 启用 -->
+    <string name="app_action_title">应用操作：%1$s</string>
+    <string name="action_disable">禁用应用</string>
+    <string name="action_enable">启用应用</string>
+    <string name="action_site">官网搜索</string>
+    <string name="disabled_label">已禁用</string>
+    <string name="disable_ok">已禁用：%1$s（将无法打开，可在列表中长按重新启用）</string>
+    <string name="enable_ok">已启用：%1$s（现已恢复正常使用）</string>
+    <string name="action_failed">操作失败：%1$s</string>
+    <string name="perm_title">需要 Shizuku 授权（无需 root）</string>
+    <string name="perm_msg">禁用/启用“%1$s”需要 Shizuku 或 root 权限。请先授权 Shizuku（无需 root），或打开系统设置手动禁用/启用。</string>
+    <string name="perm_grant">去授权 Shizuku</string>
+    <string name="perm_grant_tip">请在 Shizuku 弹窗中点击允许，然后返回重试</string>
+    <string name="open_settings">打开系统设置</string>
+
     <!-- 官网搜索 -->
     <string name="site_search_title">未收录官网</string>
     <string name="site_search_msg">“%1$s”暂未收录官网，是否在浏览器中搜索其官方网站？</string>

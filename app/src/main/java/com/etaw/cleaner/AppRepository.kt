@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 object AppRepository {
 
     @Suppress("DEPRECATION")
-    fun loadThirdPartyApps(context: Context): List<AppInfo> {
+    fun loadThirdPartyApps(context: Context, disabledSet: Set<String> = emptySet()): List<AppInfo> {
         val pm = context.packageManager
         val infos = if (android.os.Build.VERSION.SDK_INT >= 33) {
             pm.getInstalledApplications(PackageManager.ApplicationInfoFlags.of(0))
@@ -33,7 +33,8 @@ object AppRepository {
                         name = label,
                         icon = app.loadIcon(pm),
                         installTime = pkgInfo.firstInstallTime,
-                        website = site
+                        website = site,
+                        disabled = app.packageName in disabledSet
                     )
                 )
             } catch (e: Exception) {
@@ -44,8 +45,8 @@ object AppRepository {
         return result
     }
 
-    suspend fun loadAppsAsync(context: Context): List<AppInfo> =
-        withContext(Dispatchers.IO) { loadThirdPartyApps(context) }
+    suspend fun loadAppsAsync(context: Context, disabledSet: Set<String> = emptySet()): List<AppInfo> =
+        withContext(Dispatchers.IO) { loadThirdPartyApps(context, disabledSet) }
 
     fun formatTime(millis: Long): String {
         val fmt = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())

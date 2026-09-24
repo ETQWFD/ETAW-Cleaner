@@ -7,7 +7,8 @@ data class AppInfo(
     val name: String,
     val icon: Drawable?,
     val installTime: Long,
-    val website: String?
+    val website: String?,
+    val disabled: Boolean = false
 )
 
 data class RecordItem(

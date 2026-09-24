@@ -46,7 +46,7 @@ class AppsFragment : Fragment() {
         adapter = AppAdapter(
             emptyList(),
             onClick = { app -> showUninstallDialog(app) },
-            onLongClick = { app -> showWebsiteSearch(app) }
+            onLongClick = { app -> showAppActionsDialog(app) }
         )
         binding.recyclerApps.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerApps.adapter = adapter
@@ -65,7 +65,22 @@ class AppsFragment : Fragment() {
         binding.emptyView.visibility = View.GONE
         lifecycleScope.launch {
             try {
-                val apps = AppRepository.loadAppsAsync(requireContext())
+                val hasShell = ShizukuHelper.isReady() || RootHelper.isAvailable()
+                val disabledSet = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    if (hasShell) {
+                        val exec: (String) -> Pair<Boolean, String> = { cmd ->
+                            if (ShizukuHelper.isReady()) ShizukuHelper.exec(cmd) else RootHelper.exec(cmd)
+                        }
+                        exec("pm list packages -d --user 0").second
+                            .lines()
+                            .mapNotNull { it.removePrefix("package:") }
+                            .filter { it.isNotBlank() }
+                            .toSet()
+                    } else {
+                        emptySet()
+                    }
+                }
+                val apps = AppRepository.loadAppsAsync(requireContext(), disabledSet)
                 cachedApps = apps
                 adapter.submit(apps)
                 binding.tvAppCount.text = getString(R.string.scan_result, apps.size)
@@ -78,6 +93,85 @@ class AppsFragment : Fragment() {
                 binding.btnRefresh.isEnabled = true
             }
         }
+    }
+
+    /** 长按应用：禁用 / 启用 / 官网搜索 */
+    private fun showAppActionsDialog(app: AppInfo) {
+        val ctx = requireContext()
+        val options = if (app.disabled) {
+            arrayOf(getString(R.string.action_enable), getString(R.string.action_site))
+        } else {
+            arrayOf(getString(R.string.action_disable), getString(R.string.action_site))
+        }
+        AlertDialog.Builder(ctx)
+            .setTitle(getString(R.string.app_action_title, app.name))
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> if (app.disabled) enableApp(app) else disableApp(app)
+                    1 -> showWebsiteSearch(app)
+                }
+            }
+            .show()
+    }
+
+    private fun disableApp(app: AppInfo) {
+        val ctx = requireContext()
+        if (!ShizukuHelper.isReady() && !RootHelper.isAvailable()) {
+            showPermissionGuide(app)
+            return
+        }
+        lifecycleScope.launch {
+            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                val exec: (String) -> Pair<Boolean, String> = { cmd ->
+                    if (ShizukuHelper.isReady()) ShizukuHelper.exec(cmd) else RootHelper.exec(cmd)
+                }
+                val r = exec("pm disable-user --user 0 \"${app.pkg}\"")
+                r.first || r.second.contains("already")
+            }
+            Toast.makeText(ctx, if (ok) getString(R.string.disable_ok, app.name) else getString(R.string.action_failed, app.name), Toast.LENGTH_LONG).show()
+            loadApps()
+        }
+    }
+
+    private fun enableApp(app: AppInfo) {
+        val ctx = requireContext()
+        if (!ShizukuHelper.isReady() && !RootHelper.isAvailable()) {
+            showPermissionGuide(app)
+            return
+        }
+        lifecycleScope.launch {
+            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                val exec: (String) -> Pair<Boolean, String> = { cmd ->
+                    if (ShizukuHelper.isReady()) ShizukuHelper.exec(cmd) else RootHelper.exec(cmd)
+                }
+                val r = exec("pm enable --user 0 \"${app.pkg}\"")
+                r.first || r.second.contains("already")
+            }
+            Toast.makeText(ctx, if (ok) getString(R.string.enable_ok, app.name) else getString(R.string.action_failed, app.name), Toast.LENGTH_LONG).show()
+            loadApps()
+        }
+    }
+
+    /** 无 Shizuku/root 时：引导授权（无需 root）或打开系统设置手动操作 */
+    private fun showPermissionGuide(app: AppInfo) {
+        val ctx = requireContext()
+        AlertDialog.Builder(ctx)
+            .setTitle(R.string.perm_title)
+            .setMessage(getString(R.string.perm_msg, app.name))
+            .setPositiveButton(R.string.perm_grant) { _, _ ->
+                ShizukuHelper.requestPermission()
+                Toast.makeText(ctx, R.string.perm_grant_tip, Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton(R.string.open_settings) { _, _ ->
+                try {
+                    startActivity(
+                        Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${app.pkg}"))
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(ctx, R.string.no_browser, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .show()
     }
 
     private fun showUninstallDialog(app: AppInfo) {

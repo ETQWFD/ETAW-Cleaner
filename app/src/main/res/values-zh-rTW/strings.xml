@@ -52,6 +52,21 @@
     <string name="record_scanned">深度掃描：%1$d 處</string>
     <string name="record_deleted">已刪除：%1$d 處，釋放 %2$s</string>
 
+    <!-- 停用 / 啟用 -->
+    <string name="app_action_title">應用操作：%1$s</string>
+    <string name="action_disable">停用應用</string>
+    <string name="action_enable">啟用應用</string>
+    <string name="action_site">官網搜尋</string>
+    <string name="disabled_label">已停用</string>
+    <string name="disable_ok">已停用：%1$s（將無法開啟，可在清單中長按重新啟用）</string>
+    <string name="enable_ok">已啟用：%1$s（現已恢復正常使用）</string>
+    <string name="action_failed">操作失敗：%1$s</string>
+    <string name="perm_title">需要 Shizuku 授權（無需 root）</string>
+    <string name="perm_msg">停用/啟用「%1$s」需要 Shizuku 或 root 權限。請先授權 Shizuku（無需 root），或開啟系統設定手動停用/啟用。</string>
+    <string name="perm_grant">去授權 Shizuku</string>
+    <string name="perm_grant_tip">請在 Shizuku 彈窗中點擊允許，然後返回重試</string>
+    <string name="open_settings">開啟系統設定</string>
+
     <string name="site_search_title">未收錄官網</string>
     <string name="site_search_msg">「%1$s」暫未收錄官網，是否在瀏覽器中搜尋其官方網站？</string>
     <string name="site_search_go">搜尋官網</string>

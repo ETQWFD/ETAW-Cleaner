@@ -30,6 +30,8 @@ class AppAdapter(
         val ctx = holder.itemView.context
         holder.binding.appIcon.setImageDrawable(app.icon)
         holder.binding.appName.text = app.name
+        holder.binding.appBadge.visibility =
+            if (app.disabled) android.view.View.VISIBLE else android.view.View.GONE
         holder.binding.appMeta.text =
             "${app.pkg}  ·  安装于 ${AppRepository.formatTime(app.installTime)}"
         val site = app.website

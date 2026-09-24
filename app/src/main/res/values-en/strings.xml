@@ -52,6 +52,21 @@
     <string name="record_scanned">Deep scan: %1$d items</string>
     <string name="record_deleted">Deleted: %1$d items, freed %2$s</string>
 
+    <!-- Disable / Enable -->
+    <string name="app_action_title">App actions: %1$s</string>
+    <string name="action_disable">Disable app</string>
+    <string name="action_enable">Enable app</string>
+    <string name="action_site">Search official site</string>
+    <string name="disabled_label">Disabled</string>
+    <string name="disable_ok">"%1$s" disabled (cannot be opened; long-press in the list to re-enable)</string>
+    <string name="enable_ok">"%1$s" enabled and working normally</string>
+    <string name="action_failed">Action failed: %1$s</string>
+    <string name="perm_title">Shizuku permission needed (no root)</string>
+    <string name="perm_msg">Disabling/enabling "%1$s" requires Shizuku or root permission. Grant Shizuku first (no root needed), or open system settings to do it manually.</string>
+    <string name="perm_grant">Grant Shizuku</string>
+    <string name="perm_grant_tip">Tap Allow in the Shizuku dialog, then come back and retry</string>
+    <string name="open_settings">Open system settings</string>
+
     <string name="site_search_title">Official site not indexed</string>
     <string name="site_search_msg">The official site of "%1$s" is not indexed yet. Search it in your browser?</string>
     <string name="site_search_go">Search Official Site</string>
