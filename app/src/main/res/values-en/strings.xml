@@ -20,6 +20,14 @@
     <string name="junk_confirm_msg">Will delete %1$d items, %2$s. Only obvious junk (old APKs/temp logs/caches) is removed; photos and documents are never touched.</string>
     <string name="junk_done">Deleted %1$d junk items</string>
 
+    <!-- Logs -->
+    <string name="nav_logs">Logs</string>
+    <string name="logs_title">Runtime Logs</string>
+    <string name="logs_hint">Detailed run records; copyable, not deletable</string>
+    <string name="logs_copy">Copy all</string>
+    <string name="logs_copied">Logs copied to clipboard</string>
+    <string name="logs_empty">No logs yet</string>
+
     <string name="scan_result">Third-party apps scanned: %1$d</string>
     <string name="btn_refresh">Rescan</string>
     <string name="empty_apps">No third-party apps found</string>

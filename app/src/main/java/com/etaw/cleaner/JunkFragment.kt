@@ -73,13 +73,19 @@ class JunkFragment : Fragment() {
     }
 
     private fun scan() {
+        AppLog.i("Junk", "junk scan started")
         binding.progressBar.visibility = View.VISIBLE
         binding.emptyView.visibility = View.GONE
         binding.btnScanJunk.isEnabled = false
         lifecycleScope.launch {
-            items = withContext(Dispatchers.IO) { JunkScanner.scan() }
+            items = withContext(Dispatchers.IO) {
+                try { JunkScanner.scan() } catch (e: Exception) {
+                    AppLog.e("Junk", "scan failed: ${e.message}"); emptyList()
+                }
+            }
             checked.clear()
             items.indices.forEach { checked += it }
+            AppLog.i("Junk", "scan found ${items.size} items, total=${JunkScanner.formatSize(items.sumOf { it.sizeBytes })}")
             binding.progressBar.visibility = View.GONE
             binding.btnScanJunk.isEnabled = true
             adapter.notifyDataSetChanged()

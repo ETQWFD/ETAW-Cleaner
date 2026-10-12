@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppLog.init(this)
+        AppLog.i("Main", "onCreate versionName=${packageManager.getPackageInfo(packageName,0).versionName}")
         applySavedTheme()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_apps -> { showFragment(AppsFragment()); true }
                 R.id.nav_junk -> { showFragment(JunkFragment()); true }
                 R.id.nav_recycle -> { showFragment(RecycleFragment()); true }
+                R.id.nav_logs -> { showFragment(LogsFragment()); true }
                 R.id.nav_settings -> { showFragment(SettingsFragment()); true }
                 else -> false
             }

@@ -20,6 +20,14 @@
     <string name="junk_confirm_msg">將刪除 %1$d 項，共 %2$s。僅刪除明確的垃圾檔案（舊安裝包/暫存日誌/快取），不會碰觸照片、文件等個人資料。</string>
     <string name="junk_done">已刪除 %1$d 項垃圾檔案</string>
 
+    <!-- 日誌 -->
+    <string name="nav_logs">日誌</string>
+    <string name="logs_title">執行日誌</string>
+    <string name="logs_hint">詳細執行記錄，可複製，不可刪除</string>
+    <string name="logs_copy">複製全部</string>
+    <string name="logs_copied">日誌已複製到剪貼簿</string>
+    <string name="logs_empty">尚無日誌</string>
+
     <string name="scan_result">已掃描第三方應用：%1$d 個</string>
     <string name="btn_refresh">重新掃描</string>
     <string name="empty_apps">未發現第三方應用</string>

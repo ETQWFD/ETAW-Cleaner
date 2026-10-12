@@ -12,8 +12,8 @@
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
 <style>
   :root{
-    --teal:#0FA893; --teal-deep:#0B7C6C; --teal-dark:#085B4F;
-    --ink:#14211E; --sub:#5C6F6B; --bg:#F2F6F5; --surface:#FFFFFF; --line:#E0EAE7;
+    --teal:#1E6FE0; --teal-deep:#1557B8; --teal-dark:#0F3F8C;
+    --ink:#14211E; --sub:#5C6F6B; --bg:#F4F8FF; --surface:#FFFFFF; --line:#D6E2F7;
     --amber:#F4A259; --radius:18px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -36,7 +36,7 @@
   .btn.secondary{background:var(--surface);color:var(--teal-deep) !important;border:1.5px solid var(--teal)}
 
   /* Hero */
-  header{background:linear-gradient(160deg,#0E9C8B 0%,#0B7C6C 55%,#085B4F 100%);color:#fff;overflow:hidden}
+  header{background:linear-gradient(160deg,#2E7BF0 0%,#1557B8 55%,#0F3F8C 100%);color:#fff;overflow:hidden}
   .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:34px;align-items:center;padding:64px 0 58px}
   .kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.14em;background:rgba(255,255,255,.16);padding:6px 14px;border-radius:999px;margin-bottom:18px}
   h1{font-size:46px;line-height:1.22;font-weight:900;letter-spacing:.01em}
@@ -75,7 +75,7 @@
   .flow article p{font-size:14px;color:var(--sub);margin-top:4px}
 
   /* 下载 */
-  .dl{background:linear-gradient(150deg,#0E9C8B,#0B7C6C 60%,#085B4F);color:#fff;border-radius:26px;padding:48px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
+  .dl{background:linear-gradient(150deg,#2E7BF0,#1557B8 60%,#0F3F8C);color:#fff;border-radius:26px;padding:48px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
   .dl h2{color:#fff;margin:8px 0 10px}
   .dl .sub{color:rgba(255,255,255,.85);font-size:15px;max-width:480px}
   .dl-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:18px;padding:24px 26px;min-width:280px;backdrop-filter:blur(6px)}
@@ -149,37 +149,47 @@
   <div class="wrap">
     <div class="sec-head">
       <span class="tag">FEATURES</span>
-      <h2>六大能力，真实可用</h2>
+      <h2>八大能力，真实可用</h2>
       <p>不是演示，扫描、卸载、清理、记录每一步都是真实的。</p>
     </div>
     <div class="feat">
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></div>
         <h3>第三方应用扫描</h3>
         <p>扫描全部第三方应用，列表清晰展示每个应用的名称、包名、安装时间与官方网站。</p>
       </div>
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M12 3l2.4 5.6L20 9l-4.4 3.6L17.2 19 12 15.8 6.8 19l1.6-6.4L4 9l5.6-.4z"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M12 3l2.4 5.6L20 9l-4.4 3.6L17.2 19 12 15.8 6.8 19l1.6-6.4L4 9l5.6-.4z"/></svg></div>
         <h3>双重验证卸载</h3>
         <p>点击应用弹出卸载询问，二次验证确认后执行卸载，系统级通道再确认一次，杜绝误删。</p>
       </div>
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12z"/><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></div>
         <h3>残留深度清理</h3>
         <p>扫描 /data 与 /sdcard 下与卸载应用相关的数据目录、缓存、OBB 等残留，配合 Shizuku 权限真正删除。</p>
       </div>
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M12 2l2.5 5.5L20 9l-4.5 4 1 5.5-4.5-2.5-4.5 2.5 1-5.5L4 9l5.5-1.5z"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v6M14 10v6"/></svg></div>
+        <h3>深度垃圾扫描</h3>
+        <p>独立「深度清理」页，列出旧安装包、临时日志、缩略图缓存、各应用缓存的目录路径、来源与大小，勾选后一键清理。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div>
+        <h3>只读运行日志</h3>
+        <p>详细记录每一次扫描、卸载与错误，支持一键复制；只追加、不可删除，遇到闪退可直接复制日志反馈定位。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M12 2l2.5 5.5L20 9l-4.5 4 1 5.5-4.5-2.5-4.5 2.5 1-5.5L4 9l5.5-1.5z"/></svg></div>
         <h3>SHA-256 回收站</h3>
         <p>卸载信息经 SHA-256 哈希计算后记入本地回收站，保存安装时间、官网等完整信息，可随时查找。</p>
       </div>
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><circle cx="12" cy="12" r="3.4"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.01a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.01a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><circle cx="12" cy="12" r="3.4"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h.01a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.01a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
         <h3>主题与多语言</h3>
         <p>内置跟随系统 / 浅色 / 深色三档主题，支持简体中文、English、繁體中文三种语言即时切换。</p>
       </div>
       <div class="card">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#0FA893" stroke-width="2"><path d="M20 11a8 8 0 11-15.5-3 8 8 0 0113-6"/><path d="M20 3v5h-5"/></svg></div>
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1E6FE0" stroke-width="2"><path d="M20 11a8 8 0 11-15.5-3 8 8 0 0113-6"/><path d="M20 3v5h-5"/></svg></div>
         <h3>检查更新</h3>
         <p>设置内一键检查更新，直连 GitHub Release 获取最新版本并跳转下载，官网下载同样同步最新版。</p>
       </div>

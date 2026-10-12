@@ -21,6 +21,14 @@
     <string name="junk_confirm_msg">将删除 %1$d 项，共 %2$s。仅删除明确的垃圾文件（旧安装包/临时日志/缓存），不会触碰照片、文档等个人资料。</string>
     <string name="junk_done">已删除 %1$d 项垃圾文件</string>
 
+    <!-- 日志 -->
+    <string name="nav_logs">日志</string>
+    <string name="logs_title">运行日志</string>
+    <string name="logs_hint">详细运行记录，可复制，不可删除</string>
+    <string name="logs_copy">复制全部</string>
+    <string name="logs_copied">日志已复制到剪贴板</string>
+    <string name="logs_empty">暂无日志</string>
+
     <!-- 应用列表 -->
     <string name="scan_result">已扫描第三方应用：%1$d 个</string>
     <string name="btn_refresh">重新扫描</string>
