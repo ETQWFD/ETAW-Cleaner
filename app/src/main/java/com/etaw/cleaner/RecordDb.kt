@@ -99,4 +99,20 @@ class RecordDb(context: Context) : SQLiteOpenHelper(context, "etaw.db", null, 2)
         writableDatabase.delete(TABLE, "id=?", arrayOf(id.toString()))
 
     fun clear(): Int = writableDatabase.delete(TABLE, null, null)
+
+    /** 卸载前已快照落库，清理完成后回写真实扫描/删除数据 */
+    fun updateAfterCleanup(
+        id: Long, scanned: Int, deleted: Int, freed: Long,
+        residue: Int, note: String, paths: String
+    ) {
+        val cv = ContentValues().apply {
+            put("scanned_count", scanned)
+            put("deleted_count", deleted)
+            put("freed_bytes", freed)
+            put("residue_count", residue)
+            put("note", note)
+            put("deleted_paths", paths)
+        }
+        writableDatabase.update(TABLE, cv, "id=?", arrayOf(id.toString()))
+    }
 }

@@ -12,5 +12,6 @@ local.properties
 keystore.properties
 *.keystore
 *.jks
+*.apk
 /site-assets
 /docs/_shots

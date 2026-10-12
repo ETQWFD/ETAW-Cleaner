@@ -24,13 +24,21 @@ class AppsFragment : Fragment() {
     private lateinit var adapter: AppAdapter
     private var cachedApps: List<AppInfo> = emptyList()
     private var pendingUninstallPkg: String? = null
+    private var snapshotRecordId: Long = 0L
+    private var snapshotApp: AppInfo? = null
 
     private val uninstallLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
             val pkg = pendingUninstallPkg
             pendingUninstallPkg = null
-            if (result.resultCode == android.app.Activity.RESULT_OK && pkg != null) {
-                onUninstallConfirmed(pkg)
+            if (pkg != null) {
+                // 系统卸载结果码不可靠：直接以"包是否还在"判断是否卸载成功
+                val stillInstalled = try {
+                    requireContext().packageManager.getPackageInfo(pkg, 0)
+                    true
+                } catch (e: Exception) { false }
+                if (!stillInstalled) onUninstallConfirmed(pkg)
+                else loadApps()
             }
         }
 
@@ -197,14 +205,20 @@ class AppsFragment : Fragment() {
 
     private fun doUninstall(app: AppInfo) {
         val activity = requireActivity()
-        if (ShizukuHelper.isReady() || RootHelper.isAvailable()) {
-            // 高权限通道：Shizuku 静默卸载 / root 卸载（真实卸载）
-            val progress = androidx.appcompat.app.AlertDialog.Builder(activity)
-                .setTitle(R.string.uninstalling)
-                .setMessage(getString(R.string.uninstalling_detail, app.name))
-                .setCancelable(false)
-                .show()
-            lifecycleScope.launch {
+        // 关键修复：在真正卸载之前，立即把应用完整信息（名称/包名/版本/安装时间/官网/指纹）
+        // 以文本形式快照写入回收站——即使卸载自身导致进程被系统杀死，记录也已落库。
+        lifecycleScope.launch {
+            snapshotRecordId = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                writeSnapshot(app)
+            }
+            snapshotApp = app
+            if (ShizukuHelper.isReady() || RootHelper.isAvailable()) {
+                // 高权限通道：Shizuku 静默卸载 / root 卸载（真实卸载）
+                val progress = androidx.appcompat.app.AlertDialog.Builder(activity)
+                    .setTitle(R.string.uninstalling)
+                    .setMessage(getString(R.string.uninstalling_detail, app.name))
+                    .setCancelable(false)
+                    .show()
                 val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                     if (ShizukuHelper.isReady()) ShizukuHelper.uninstall(app.pkg)
                     else RootHelper.uninstall(app.pkg)
@@ -216,17 +230,58 @@ class AppsFragment : Fragment() {
                     Toast.makeText(activity, getString(R.string.uninstall_failed, app.name), Toast.LENGTH_LONG).show()
                     loadApps()
                 }
+            } else {
+                // 系统卸载通道：系统弹窗即第二道验证
+                pendingUninstallPkg = app.pkg
+                val intent = Intent(Intent.ACTION_DELETE, Uri.parse("package:${app.pkg}"))
+                uninstallLauncher.launch(intent)
             }
-        } else {
-            // 系统卸载通道：系统弹窗即第二道验证
-            pendingUninstallPkg = app.pkg
-            val intent = Intent(Intent.ACTION_DELETE, Uri.parse("package:${app.pkg}"))
-            uninstallLauncher.launch(intent)
         }
     }
 
+    /** 卸载前快照：把安装包完整信息序列化为文本并立即落库，返回行 id */
+    private fun infoHeader(app: AppInfo): String {
+        val ctx = requireContext().applicationContext
+        val versionText = try {
+            val pi = ctx.packageManager.getPackageInfo(app.pkg, 0)
+            "v${pi.versionName} (${pi.longVersionCode})"
+        } catch (e: Exception) { "未知版本" }
+        val installDate = android.text.format.DateFormat.format("yyyy-MM-dd HH:mm", app.installTime)
+        return buildString {
+            append("应用：").append(app.name).append("\n")
+            append("包名：").append(app.pkg).append("\n")
+            append("版本：").append(versionText).append("\n")
+            append("安装时间：").append(installDate).append("\n")
+            append("官网：").append(if (app.website.isNullOrBlank()) "未收录" else app.website)
+        }
+    }
+
+    private fun writeSnapshot(app: AppInfo): Long {
+        val ctx = requireContext().applicationContext
+        val note = infoHeader(app) + "\n—— 卸载前已快照保存，残留清理中…"
+        return try {
+            RecordDb(ctx).insert(
+                RecordItem(
+                    id = 0,
+                    pkg = app.pkg,
+                    name = app.name,
+                    website = app.website ?: "",
+                    installTime = app.installTime,
+                    uninstallTime = System.currentTimeMillis(),
+                    sha256 = HashHelper.appFingerprint(app),
+                    residueCount = 0,
+                    scannedCount = 0,
+                    deletedCount = 0,
+                    freedBytes = 0L,
+                    deletedPaths = "",
+                    note = note
+                )
+            )
+        } catch (e: Exception) { 0L }
+    }
+
     private fun onUninstallConfirmed(pkg: String) {
-        val app = cachedApps.firstOrNull { it.pkg == pkg } ?: return
+        val app = cachedApps.firstOrNull { it.pkg == pkg } ?: snapshotApp ?: return
         startCleanup(app)
     }
 
@@ -342,6 +397,7 @@ class AppsFragment : Fragment() {
         }
     }
 
+    /** 清理完成后回写同一条快照记录（不新增行，避免重复） */
     private fun saveRecord(
         app: AppInfo,
         scanned: List<ResidueItem>,
@@ -350,24 +406,39 @@ class AppsFragment : Fragment() {
         note: String
     ) {
         val ctx = requireContext()
-        val db = RecordDb(ctx)
-        db.insert(
-            RecordItem(
-                id = 0,
-                pkg = app.pkg,
-                name = app.name,
-                website = app.website ?: "",
-                installTime = app.installTime,
-                uninstallTime = System.currentTimeMillis(),
-                sha256 = HashHelper.appFingerprint(app),
-                residueCount = (scanned.size - deleted.size).coerceAtLeast(0),
-                scannedCount = scanned.size,
-                deletedCount = deleted.size,
-                freedBytes = freedBytes,
-                deletedPaths = deleted.joinToString("\n") { it.path },
-                note = note
-            )
-        )
+        val header = infoHeader(app)
+        val finalNote = header + "\n\n" + note
+        try {
+            if (snapshotRecordId > 0L) {
+                RecordDb(ctx).updateAfterCleanup(
+                    snapshotRecordId,
+                    scanned.size, deleted.size, freedBytes,
+                    (scanned.size - deleted.size).coerceAtLeast(0),
+                    finalNote,
+                    deleted.joinToString("\n") { it.path }
+                )
+            } else {
+                // 兜底：快照写入失败时直接插入完整记录
+                RecordDb(ctx).insert(
+                    RecordItem(
+                        id = 0,
+                        pkg = app.pkg,
+                        name = app.name,
+                        website = app.website ?: "",
+                        installTime = app.installTime,
+                        uninstallTime = System.currentTimeMillis(),
+                        sha256 = HashHelper.appFingerprint(app),
+                        residueCount = (scanned.size - deleted.size).coerceAtLeast(0),
+                        scannedCount = scanned.size,
+                        deletedCount = deleted.size,
+                        freedBytes = freedBytes,
+                        deletedPaths = deleted.joinToString("\n") { it.path },
+                        note = finalNote
+                    )
+                )
+            }
+        } catch (e: Exception) { /* 记录失败不影响卸载结果 */ }
+        snapshotRecordId = 0L
     }
 
     private fun showWebsiteSearch(app: AppInfo) {
