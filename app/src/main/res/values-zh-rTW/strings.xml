@@ -5,6 +5,20 @@
     <string name="nav_apps">應用掃描</string>
     <string name="nav_recycle">回收站</string>
     <string name="nav_settings">設定</string>
+    <string name="nav_junk">深度清理</string>
+    <string name="visit_site_link">官網下載直鏈：%1$s</string>
+
+    <!-- 深度清理（垃圾掃描） -->
+    <string name="junk_title_default">深度清理</string>
+    <string name="junk_hint">掃描手機中的舊安裝包、暫存檔案與應用快取</string>
+    <string name="junk_scan">開始掃描</string>
+    <string name="junk_empty">未發現垃圾檔案，手機很乾淨</string>
+    <string name="junk_selected">已選 %1$d 項，共 %2$s</string>
+    <string name="junk_owner">來源：%1$s</string>
+    <string name="junk_clean">清理選取</string>
+    <string name="junk_confirm_title">確認清理選取的垃圾？</string>
+    <string name="junk_confirm_msg">將刪除 %1$d 項，共 %2$s。僅刪除明確的垃圾檔案（舊安裝包/暫存日誌/快取），不會碰觸照片、文件等個人資料。</string>
+    <string name="junk_done">已刪除 %1$d 項垃圾檔案</string>
 
     <string name="scan_result">已掃描第三方應用：%1$d 個</string>
     <string name="btn_refresh">重新掃描</string>

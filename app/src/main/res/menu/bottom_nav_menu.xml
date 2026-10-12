@@ -5,6 +5,10 @@
         android:icon="@drawable/ic_nav_apps"
         android:title="@string/nav_apps" />
     <item
+        android:id="@+id/nav_junk"
+        android:icon="@drawable/ic_nav_junk"
+        android:title="@string/nav_junk" />
+    <item
         android:id="@+id/nav_recycle"
         android:icon="@drawable/ic_nav_recycle"
         android:title="@string/nav_recycle" />

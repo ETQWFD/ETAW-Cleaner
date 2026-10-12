@@ -3,17 +3,44 @@
     <style name="Theme.ETAWCleaner" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
-        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
         <item name="android:windowBackground">@color/bg</item>
         <item name="materialCardViewStyle">@style/Widget.ETAW.Card</item>
+        <item name="materialAlertDialogTheme">@style/Theme.ETAW.Dialog</item>
+        <item name="android:alertDialogTheme">@style/Theme.ETAW.Dialog</item>
     </style>
 
     <style name="Widget.ETAW.Card" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/surface</item>
-        <item name="cardCornerRadius">16dp</item>
-        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">3dp</item>
         <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- 现代化圆角弹窗 -->
+    <style name="Theme.ETAW.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitleTextStyle">@style/Dialog.ETAW.Title</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.ETAW.Dialog</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.ETAW.Button.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.ETAW.Button.Text</item>
+        <item name="colorPrimary">@color/primary</item>
+    </style>
+
+    <style name="Dialog.ETAW.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">19sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearance.ETAW.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="Widget.ETAW.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="rippleColor">#221E6FE0</item>
     </style>
 </resources>

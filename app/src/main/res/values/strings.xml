@@ -6,6 +6,20 @@
     <string name="nav_apps">应用扫描</string>
     <string name="nav_recycle">回收站</string>
     <string name="nav_settings">设置</string>
+    <string name="nav_junk">深度清理</string>
+    <string name="visit_site_link">官网下载直链：%1$s</string>
+
+    <!-- 深度清理（垃圾扫描） -->
+    <string name="junk_title_default">深度清理</string>
+    <string name="junk_hint">扫描手机中的旧安装包、临时文件与应用缓存</string>
+    <string name="junk_scan">开始扫描</string>
+    <string name="junk_empty">未发现垃圾文件，手机很干净</string>
+    <string name="junk_selected">已选 %1$d 项，共 %2$s</string>
+    <string name="junk_owner">来源：%1$s</string>
+    <string name="junk_clean">清理选中</string>
+    <string name="junk_confirm_title">确认清理选中的垃圾？</string>
+    <string name="junk_confirm_msg">将删除 %1$d 项，共 %2$s。仅删除明确的垃圾文件（旧安装包/临时日志/缓存），不会触碰照片、文档等个人资料。</string>
+    <string name="junk_done">已删除 %1$d 项垃圾文件</string>
 
     <!-- 应用列表 -->
     <string name="scan_result">已扫描第三方应用：%1$d 个</string>

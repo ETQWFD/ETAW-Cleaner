@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_apps -> { showFragment(AppsFragment()); true }
+                R.id.nav_junk -> { showFragment(JunkFragment()); true }
                 R.id.nav_recycle -> { showFragment(RecycleFragment()); true }
                 R.id.nav_settings -> { showFragment(SettingsFragment()); true }
                 else -> false
