@@ -15,12 +15,16 @@ object AppLog {
 
     private const val MAX_MEM = 400
     private val buf = ArrayDeque<String>(MAX_MEM)
-    private val ts = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-    private var file: File? = null
+    private val fileHolder = ThreadLocal<File?>()
+    // SimpleDateFormat 非线程安全（崩溃处理器可能在任何线程触发），用 ThreadLocal 隔离
+    private val fmt = ThreadLocal.withInitial {
+        SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+    }
+    private fun now(): String = fmt.get().format(Date())
 
     fun init(ctx: Context) {
-        if (file == null) {
-            file = File(ctx.applicationContext.filesDir, "app_log.txt")
+        if (fileHolder.get() == null) {
+            fileHolder.set(File(ctx.applicationContext.filesDir, "app_log.txt"))
             // 崩溃前先把堆栈写进日志，便于排查闪退
             val prev = Thread.getDefaultUncaughtExceptionHandler()
             Thread.setDefaultUncaughtExceptionHandler { t, e ->
@@ -37,17 +41,17 @@ object AppLog {
             buf.addLast(line)
             while (buf.size > MAX_MEM) buf.removeFirst()
             try {
-                file?.let { f ->
+                fileHolder.get()?.let { f ->
                     FileWriter(f, true).use { it.append(line).append('\n') }
                 }
             } catch (e: Exception) { /* 忽略持久化失败 */ }
         }
     }
 
-    fun d(tag: String, msg: String) = write("[D ${ts.format(Date())}] $tag: $msg")
-    fun i(tag: String, msg: String) = write("[I ${ts.format(Date())}] $tag: $msg")
-    fun w(tag: String, msg: String) = write("[W ${ts.format(Date())}] $tag: $msg")
-    fun e(tag: String, msg: String) = write("[E ${ts.format(Date())}] $tag: $msg")
+    fun d(tag: String, msg: String) = write("[D ${now()}] $tag: $msg")
+    fun i(tag: String, msg: String) = write("[I ${now()}] $tag: $msg")
+    fun w(tag: String, msg: String) = write("[W ${now()}] $tag: $msg")
+    fun e(tag: String, msg: String) = write("[E ${now()}] $tag: $msg")
 
     /** 最新在前 */
     fun all(): List<String> = synchronized(this) { buf.reversed() }

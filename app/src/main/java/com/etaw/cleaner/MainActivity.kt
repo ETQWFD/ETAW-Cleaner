@@ -18,14 +18,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppLog.init(this)
-        AppLog.i("Main", "onCreate versionName=${packageManager.getPackageInfo(packageName,0).versionName}")
+        val restoring = savedInstanceState != null
+        AppLog.i("Main", "onCreate v=${packageManager.getPackageInfo(packageName,0).versionName} restore=$restoring")
         applySavedTheme()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            showFragment(AppsFragment())
+        // 冷启动恢复防御：进程被杀后重启时，系统会按上次状态恢复 Fragment。
+        // 恢复路径在不同设备/模拟器上行为差异大，任何隐藏问题都会在页面显示前崩溃（表现为"第二次使用闪退"）。
+        // 这里统一丢弃旧恢复状态、总是重建干净界面，从根上杜绝恢复期崩溃。
+        if (restoring) {
+            try {
+                val fm = supportFragmentManager
+                fm.fragments.forEach { f ->
+                    if (f.isAdded) fm.beginTransaction().remove(f).commitNowAllowingStateLoss()
+                }
+            } catch (e: Exception) {
+                AppLog.e("Main", "restore cleanup failed: ${e.message}")
+            }
         }
+        showFragment(AppsFragment())
+        binding.bottomNav.selectedItemId = R.id.nav_apps
 
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
